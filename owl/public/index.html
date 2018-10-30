@@ -1,0 +1,82 @@
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+</head>
+<form>
+    Enter a word: <input type="text" id="owlform" value=""><br>
+    <button id="owlbutton">Submit</button> Definition: <span id="owldef">Empty</span>
+</form>
+<form>
+    Enter A Utah City: <input type="text" id="cityform" value=""><br> Suggestion: <span id="txtHint">Empty</span>
+    <input id="weatherButton" type="submit" value="Submit">
+    <p>City</p>
+    <textarea id="displayCity">No City</textarea>
+    <p>Current Weather</p>
+    <div id="weather">No weather</div>
+    </div>
+</form>
+
+<script>
+    $("#cityform").keyup(function(e) {
+        if ($("#cityField").val() === "") {
+            $("#txtHint").html("");
+        }
+        var url = "getcity?q=" + $("#cityform").val();
+        $.getJSON(url, function(data) {
+            var everything;
+            everything = "<ul>";
+            $.each(data, function(i, item) {
+                everything += "<li> " + data[i].city;
+            });
+            everything += "</ul>";
+            console.log(everything);
+            $("#txtHint").html(everything);
+        })
+
+    });
+    $("#owlbutton").click(function(event) {
+        event.preventDefault();
+        var url = "/owl/?q=" + $('#owlform').val();
+        $.getJSON(url, function(data) {
+            console.log(data);
+            var everything;
+            everything = "<ul>";
+            $.each(data, function(i, item) {
+                everything += "<li>" + data[i].defenition + "</li>";
+            })
+            everything += "</ul>";
+            $("#owldef").html(everything);
+        });
+    })
+    $("#weatherButton").click(function(e) {
+        e.preventDefault();
+        console.log($("#cityform").val());
+        var url = "https://api.openweathermap.org/data/2.5/weather?units=imperial&appid=2af6a46e17e0307650703a1a8b08ef05&q=" + $("#cityform").val();
+        $.getJSON(url, function(parsed_json) {
+            console.log(parsed_json);
+            var everything;
+            var location = parsed_json['name'];
+            var weather = parsed_json['weather'][0]['main'];
+            var temp = parsed_json['main']['temp'];
+            var weather_icon = parsed_json['weather'][0]['icon'];
+            var humidity = parsed_json['main']['humidity'];
+            var temp_min = parsed_json['main']['temp_min'];
+            var temp_max = parsed_json['main']['temp_max'];
+            var wind_speed = parsed_json['wind']['speed'];
+            everything = "<img src=\"http://openweathermap.org/img/w/" + weather_icon + ".png\"/>"
+            everything += "<ul>";
+            everything += "<li>Location: " + location;
+            everything += "<li>Weather: " + weather + " (" + temp + "&#8457;)";
+            everything += "<li>Low: " + temp_min + "&#8457; | High: " + temp_max + "&#8457;";
+            everything += "<li>Humidity: " + humidity + "%";
+            everything += "<li>Wind: " + wind_speed + " mph";
+            everything += "</ul>";
+            console.log("everything: " + everything);
+            $("#weather").html(everything);
+        })
+
+    })
+</script>
+</html>

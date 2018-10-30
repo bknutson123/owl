@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+    </head>
+    <form>
+        Enter a word: <input type="text" id="owlform" value=""><br>
+        <button id="owlbutton">Submit</button>
+        Definition: <span id="owldef">Empty</span>
+    </form>
+
+    <script>
+        $("#owlbutton").click(function(event) {
+            event.preventDefault();
+            var url = "owl/"+$('#owlform').val();
+            $.getJSON(url, function(data) {
+                console.log(data);
+                var everything;
+                everything = "<ul>";
+                $.each(data, function(i, item) {
+                    everything += "<li>"+data[i].definition+"</li>";
+                })
+                everything += "</ul>";
+                $("#owldef").html = everything;
+            });
+        })
+    </script>
+</html>
